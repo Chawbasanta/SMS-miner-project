@@ -1,33 +1,71 @@
 import os
-import sys
 from tkinter import *
-import webbrowser
-from matplotlib.style import use
-import pyttsx3
-import datetime
+# from functions.socialLinks import facebook,git,yt,twitter
+# from functions.method import Speak
 from PIL import Image,ImageTk
 import mysql.connector as mq
+import webbrowser
+import pyttsx3 as pt
+def Speak(audio):
+    engine = pt.init()
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[1].id)
+    engine.setProperty('rate', 150)
+    engine.say(audio)
+    engine.runAndWait()
+     
+def facebook(self):
+    webbrowser.open('https://www.facebook.com/basantaChaw')
+
+def git(self):
+    webbrowser.open('https://github.com/Chawbasanta')
+
+def twitter(self):
+    webbrowser.open('https://twitter.com/Ibasanta69')
+
+def yt(self):
+    webbrowser.open('https://www.youtube.com/channel/UCF0bo_siMzdjxY_yMVrMypA')
+   
+#----------------------------
+def register():
+    winlogin.destroy()
+    mypath='register.py'
+    os.system('"%s"' %mypath)
+
+def Dashboard():
+    winlogin.destroy()
+    mypath='dashboard.py'
+    os.system('"%s"' %mypath) 
+
+def reset():
+    winlogin.destroy()
+    mypath='reset.py'
+    os.system('"%s"' %mypath)
 
 winlogin=Tk()
 winlogin.title('_Login')
-winlogin.iconbitmap('img/ss.ico')
+winlogin.iconbitmap('images/img/ss.ico')
 winlogin.geometry('600x360')
 winlogin.config(bg='whitesmoke')
 
-def my():
-    conn=mq.connect(host='localhost',user='root',password='',database='login')
+
+def login_user():
+    conn=mq.connect(host='localhost',user='root',password='',database='dbsms')
     cur=conn.cursor()
-    user=get_user.get()
-    pas=get_pass.get()
-    print(user)
-    print(pas)
-    sql=('insert into lg(users,passs) values ("{0}","{1}")'.format(user,pas))
+    sql="select*from register where email=%s and passwords=%s"
+    val=(get_email.get(),get_pass.get())
     if conn.is_connected():
-        cur.execute(sql)
-        conn.commit()
-        print('ok')
+        cur.execute(sql,val)
+        #conn.commit()2314ol8yw45
+        result=cur.fetchall()
+        if result:
+            Speak('Successfully login and welcome')
+            Dashboard()
+        else:
+            Speak('Invalid password and email id please try again')
+            reset()
     else:
-        print('no')
+        Speak('connection failed')
 
 
 #--------------------Social Link-----------------------
@@ -36,15 +74,6 @@ def my():
 #https://www.linkedin.com/in/basanta-chaw-15327a201/
 #https://www.youtube.com/channel/UCF0bo_siMzdjxY_yMVrMypA
 #https://twitter.com/Ibasanta69
-def  facebook():
-    webbrowser.open('https://www.facebook.com/basantaChaw')
-def git():
-    webbrowser.open('https://github.com/Chawbasanta')
-def twitter():
-    webbrowser.open('https://twitter.com/Ibasanta69')
-def yt():
-    webbrowser.open('https://www.youtube.com/channel/UCF0bo_siMzdjxY_yMVrMypA')
-#------------------------------------------------------
 
 def get_time():
     import time
@@ -52,34 +81,12 @@ def get_time():
     clock.config(text=timevar)
     clock.after(200,get_time)
 
-def Speak(audio):
-    engine=pyttsx3.init()
-    voices=engine.getProperty('voices')
-    engine.setProperty('voice',voices[0].id)
-    engine.setProperty('rate',150)
-    engine.say(audio)
-    print(audio)
-    engine.runAndWait()
-    
 
-def WishMe():
-   
-    hour=int(datetime.datetime.now().hour)
-    if hour>=0 and hour<12:
-        return Speak('Goood Morning have a you nice today ')
-    elif hour >=12 and hour<18:
-        return Speak('Good Afternoon')
-    elif hour>=18 and hour < 20:
-        return Speak('Good Evening')
-    else:
-        return Speak('Goood night ')
-   
+
+
+
 #--------------------Intial-------------------
-def register():
-    winlogin.destroy()
-    mypath='register.py'
-    os.system('"%s"' %mypath)
-    
+
 def reset():
     winlogin.destroy()
     mypath1='search.py'
@@ -90,11 +97,11 @@ def reset():
 #-----------------------------------------------
 
 #----------------------IMage Show part------------------
-sideimage=Image.open('img/mg.jpg')
+sideimage=Image.open('images/img/mg.jpg')
 sideimage=sideimage.resize((300,370))
 sideimg=ImageTk.PhotoImage(sideimage)
 sidelabel=Label(winlogin,image=sideimg).place(x=0,y=0)
-adminimage=Image.open('img/admin.png',)
+adminimage=Image.open('images/img/admin.png',)
 adminimage=adminimage.resize((100,105))
 admin=ImageTk.PhotoImage(adminimage)
 adminlabel=Label(winlogin,image=admin).place(x=415,y=20)
@@ -115,21 +122,21 @@ get_time()
 
 #--------------------------------Social icons ----------------------------------
 # ------------------Faceboook------------
-facebookimg=Image.open('socialIcons/fb.png')
+facebookimg=Image.open('images/socialIcons/fb.png')
 facebookimg=facebookimg.resize((30,30))
 facebookimgp=ImageTk.PhotoImage(facebookimg)
 facebookbtn=Button(winlogin,image=facebookimgp,bd=0,command=facebook)
 facebookbtn.place(x=10,y=300)
 
 #-------------------Twitter------------------
-twitterimg=Image.open('socialIcons/tw.png')
+twitterimg=Image.open('images/socialIcons/tw.png')
 twitterimg=twitterimg.resize((28,28))
 twitterimgp=ImageTk.PhotoImage(twitterimg)
 twitterbtn=Button(winlogin,image=twitterimgp,bd=0,command=twitter)
 twitterbtn.place(x=50,y=300)
 
 #----------------------Github------------------------------
-gitimg=Image.open('socialIcons/git.png')
+gitimg=Image.open('images/socialIcons/git.png')
 gitimg=gitimg.resize((30,30))
 gitimgp=ImageTk.PhotoImage(gitimg)
 gitbtn=Button(winlogin,image=gitimgp,bd=0,command=git)
@@ -138,7 +145,7 @@ gitbtn.place(x=90,y=300)
 
 
 #-----------------------Youtube----------------------
-ytimg=Image.open('socialIcons/yt.png')
+ytimg=Image.open('images/socialIcons/yt.png')
 ytimg=ytimg.resize((30,30))
 ytimgp=ImageTk.PhotoImage(ytimg)
 ytbtn=Button(winlogin,image=ytimgp,bd=0,command=yt)
@@ -148,19 +155,19 @@ ytbtn.place(x=140,y=300)
 
 
 #---------------------------------Label Shoiw Part--------------------------
-student=Label(winlogin,text='!! S T U D E N T !!')
-student.place(x=423,y=140)
-get_user=StringVar()
+student=Label(winlogin,text='!! S T u d e n t !!')
+student.place(x=430,y=140)
+get_email=StringVar()
 get_pass=StringVar()
-userlabel=Label(winlogin,text='E M A I L')
+userlabel=Label(winlogin,text='E M a i l')
 userlabel.place(x=340,y=180)
-user=Entry(winlogin,font=2,width=15,textvariable=get_user,bg='whitesmoke').place(x=400,y=180)
-passlabel=Label(winlogin,text='P A S S',)
+user=Entry(winlogin,width=25,textvariable=get_email,bg='whitesmoke').place(x=400,y=180)
+passlabel=Label(winlogin,text='P A s s',)
 passlabel.place(x=340,y=230)
-password=Entry(winlogin,font=2,width=15,textvariable=get_pass,bg='whitesmoke')
+password=Entry(winlogin,width=25,show='*',textvariable=get_pass,bg='whitesmoke')
 password.place(x=400,y=230)
-signUp=Button(winlogin,text='S i g n U p',relief=GROOVE,command=my,bg='#bba2f0')
-signUp.place(x=435,y=270)
+signUp=Button(winlogin,text='S I n g I n',relief=GROOVE,command=login_user,bg='lightgray')
+signUp.place(x=445,y=270)
 
 
 #-----------------------Footer Part Show -----------------------
@@ -175,4 +182,5 @@ dev.place(x=400,y=340)
 winlogin.resizable(False,False)
 #WishMe()
 #Speak('hi')
+#WishMe()
 winlogin.mainloop()
